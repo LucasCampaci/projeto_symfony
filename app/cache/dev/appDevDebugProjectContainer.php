@@ -63,9 +63,13 @@ class appDevDebugProjectContainer extends Container
             'doctrine.orm.default_manager_configurator' => 'getDoctrine_Orm_DefaultManagerConfiguratorService',
             'doctrine.orm.validator.unique' => 'getDoctrine_Orm_Validator_UniqueService',
             'doctrine.orm.validator_initializer' => 'getDoctrine_Orm_ValidatorInitializerService',
+            'doctrine_cache.contains_command' => 'getDoctrineCache_ContainsCommandService',
+            'doctrine_cache.delete_command' => 'getDoctrineCache_DeleteCommandService',
+            'doctrine_cache.flush_command' => 'getDoctrineCache_FlushCommandService',
             'doctrine_cache.providers.doctrine.orm.default_metadata_cache' => 'getDoctrineCache_Providers_Doctrine_Orm_DefaultMetadataCacheService',
             'doctrine_cache.providers.doctrine.orm.default_query_cache' => 'getDoctrineCache_Providers_Doctrine_Orm_DefaultQueryCacheService',
             'doctrine_cache.providers.doctrine.orm.default_result_cache' => 'getDoctrineCache_Providers_Doctrine_Orm_DefaultResultCacheService',
+            'doctrine_cache.stats_command' => 'getDoctrineCache_StatsCommandService',
             'event_dispatcher' => 'getEventDispatcherService',
             'file_locator' => 'getFileLocatorService',
             'filesystem' => 'getFilesystemService',
@@ -123,6 +127,7 @@ class appDevDebugProjectContainer extends Container
             'monolog.handler.debug' => 'getMonolog_Handler_DebugService',
             'monolog.handler.firephp' => 'getMonolog_Handler_FirephpService',
             'monolog.handler.main' => 'getMonolog_Handler_MainService',
+            'monolog.handler.null_internal' => 'getMonolog_Handler_NullInternalService',
             'monolog.logger.assetic' => 'getMonolog_Logger_AsseticService',
             'monolog.logger.deprecation' => 'getMonolog_Logger_DeprecationService',
             'monolog.logger.doctrine' => 'getMonolog_Logger_DoctrineService',
@@ -133,6 +138,7 @@ class appDevDebugProjectContainer extends Container
             'monolog.logger.router' => 'getMonolog_Logger_RouterService',
             'monolog.logger.security' => 'getMonolog_Logger_SecurityService',
             'monolog.logger.templating' => 'getMonolog_Logger_TemplatingService',
+            'monolog.processor.psr_log_message' => 'getMonolog_Processor_PsrLogMessageService',
             'profiler' => 'getProfilerService',
             'profiler_listener' => 'getProfilerListenerService',
             'property_accessor' => 'getPropertyAccessorService',
@@ -524,7 +530,7 @@ class appDevDebugProjectContainer extends Container
         $b = new \Doctrine\DBAL\Configuration();
         $b->setSQLLogger($a);
 
-        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => '127.0.0.1', 'port' => NULL, 'dbname' => 'symfony', 'user' => 'root', 'password' => 'toor', 'charset' => 'UTF8', 'driverOptions' => array(), 'defaultTableOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
+        return $this->services['doctrine.dbal.default_connection'] = $this->get('doctrine.dbal.connection_factory')->createConnection(array('driver' => 'pdo_mysql', 'host' => 'localhost', 'port' => 3306, 'dbname' => 'symfony', 'user' => 'root', 'password' => 'toor', 'charset' => 'UTF8', 'driverOptions' => array(), 'defaultTableOptions' => array()), $b, new \Symfony\Bridge\Doctrine\ContainerAwareEventManager($this), array());
     }
 
     /**
@@ -546,26 +552,31 @@ class appDevDebugProjectContainer extends Container
      * This service is shared.
      * This method always returns the same instance of the service.
      *
+     * @param bool    $lazyLoad whether to try lazy-loading the service with a proxy
+     *
      * @return \Doctrine\ORM\EntityManager A Doctrine\ORM\EntityManager instance.
      */
-    protected function getDoctrine_Orm_DefaultEntityManagerService()
+    protected function getDoctrine_Orm_DefaultEntityManagerService($lazyLoad = true)
     {
-        $a = new \Doctrine\ORM\Configuration();
-        $a->setEntityNamespaces(array());
-        $a->setMetadataCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_metadata_cache'));
-        $a->setQueryCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_query_cache'));
-        $a->setResultCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_result_cache'));
-        $a->setMetadataDriverImpl(new \Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain());
-        $a->setProxyDir((__DIR__.'/doctrine/orm/Proxies'));
-        $a->setProxyNamespace('Proxies');
-        $a->setAutoGenerateProxyClasses(true);
-        $a->setClassMetadataFactoryName('Doctrine\\ORM\\Mapping\\ClassMetadataFactory');
-        $a->setDefaultRepositoryClassName('Doctrine\\ORM\\EntityRepository');
-        $a->setNamingStrategy(new \Doctrine\ORM\Mapping\DefaultNamingStrategy());
-        $a->setQuoteStrategy(new \Doctrine\ORM\Mapping\DefaultQuoteStrategy());
-        $a->setEntityListenerResolver($this->get('doctrine.orm.default_entity_listener_resolver'));
+        $a = new \Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain();
+        $a->addDriver(new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($this->get('annotation_reader'), array(0 => ($this->targetDirs[3].'\\src\\AppBundle\\Entity'))), 'AppBundle\\Entity');
 
-        $this->services['doctrine.orm.default_entity_manager'] = $instance = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $a);
+        $b = new \Doctrine\ORM\Configuration();
+        $b->setEntityNamespaces(array('AppBundle' => 'AppBundle\\Entity'));
+        $b->setMetadataCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_metadata_cache'));
+        $b->setQueryCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_query_cache'));
+        $b->setResultCacheImpl($this->get('doctrine_cache.providers.doctrine.orm.default_result_cache'));
+        $b->setMetadataDriverImpl($a);
+        $b->setProxyDir((__DIR__.'/doctrine/orm/Proxies'));
+        $b->setProxyNamespace('Proxies');
+        $b->setAutoGenerateProxyClasses(true);
+        $b->setClassMetadataFactoryName('Doctrine\\ORM\\Mapping\\ClassMetadataFactory');
+        $b->setDefaultRepositoryClassName('Doctrine\\ORM\\EntityRepository');
+        $b->setNamingStrategy(new \Doctrine\ORM\Mapping\DefaultNamingStrategy());
+        $b->setQuoteStrategy(new \Doctrine\ORM\Mapping\DefaultQuoteStrategy());
+        $b->setEntityListenerResolver($this->get('doctrine.orm.default_entity_listener_resolver'));
+
+        $this->services['doctrine.orm.default_entity_manager'] = $instance = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $b);
 
         $this->get('doctrine.orm.default_manager_configurator')->configure($instance);
 
@@ -612,6 +623,45 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
+     * Gets the 'doctrine_cache.contains_command' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand instance.
+     */
+    protected function getDoctrineCache_ContainsCommandService()
+    {
+        return $this->services['doctrine_cache.contains_command'] = new \Doctrine\Bundle\DoctrineCacheBundle\Command\ContainsCommand();
+    }
+
+    /**
+     * Gets the 'doctrine_cache.delete_command' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand instance.
+     */
+    protected function getDoctrineCache_DeleteCommandService()
+    {
+        return $this->services['doctrine_cache.delete_command'] = new \Doctrine\Bundle\DoctrineCacheBundle\Command\DeleteCommand();
+    }
+
+    /**
+     * Gets the 'doctrine_cache.flush_command' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand instance.
+     */
+    protected function getDoctrineCache_FlushCommandService()
+    {
+        return $this->services['doctrine_cache.flush_command'] = new \Doctrine\Bundle\DoctrineCacheBundle\Command\FlushCommand();
+    }
+
+    /**
      * Gets the 'doctrine_cache.providers.doctrine.orm.default_metadata_cache' service.
      *
      * This service is shared.
@@ -623,7 +673,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['doctrine_cache.providers.doctrine.orm.default_metadata_cache'] = $instance = new \Doctrine\Common\Cache\ArrayCache();
 
-        $instance->setNamespace('sf2orm_default_cca369e10d2c709f5e91285cf79c4f9ff738f4c6076f86e307f5edd3a9959fb2');
+        $instance->setNamespace('sf_orm_default_a194aff76b6af69ee849839b176e765f7f9e129c873c427232418e1b77bbe367');
 
         return $instance;
     }
@@ -640,7 +690,7 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['doctrine_cache.providers.doctrine.orm.default_query_cache'] = $instance = new \Doctrine\Common\Cache\ArrayCache();
 
-        $instance->setNamespace('sf2orm_default_cca369e10d2c709f5e91285cf79c4f9ff738f4c6076f86e307f5edd3a9959fb2');
+        $instance->setNamespace('sf_orm_default_a194aff76b6af69ee849839b176e765f7f9e129c873c427232418e1b77bbe367');
 
         return $instance;
     }
@@ -657,9 +707,22 @@ class appDevDebugProjectContainer extends Container
     {
         $this->services['doctrine_cache.providers.doctrine.orm.default_result_cache'] = $instance = new \Doctrine\Common\Cache\ArrayCache();
 
-        $instance->setNamespace('sf2orm_default_cca369e10d2c709f5e91285cf79c4f9ff738f4c6076f86e307f5edd3a9959fb2');
+        $instance->setNamespace('sf_orm_default_a194aff76b6af69ee849839b176e765f7f9e129c873c427232418e1b77bbe367');
 
         return $instance;
+    }
+
+    /**
+     * Gets the 'doctrine_cache.stats_command' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand A Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand instance.
+     */
+    protected function getDoctrineCache_StatsCommandService()
+    {
+        return $this->services['doctrine_cache.stats_command'] = new \Doctrine\Bundle\DoctrineCacheBundle\Command\StatsCommand();
     }
 
     /**
@@ -1415,7 +1478,11 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getMonolog_Handler_ChromephpService()
     {
-        return $this->services['monolog.handler.chromephp'] = new \Symfony\Bridge\Monolog\Handler\ChromePhpHandler(200, true);
+        $this->services['monolog.handler.chromephp'] = $instance = new \Symfony\Bridge\Monolog\Handler\ChromePhpHandler(200, true);
+
+        $instance->pushProcessor($this->get('monolog.processor.psr_log_message'));
+
+        return $instance;
     }
 
     /**
@@ -1441,7 +1508,11 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getMonolog_Handler_FirephpService()
     {
-        return $this->services['monolog.handler.firephp'] = new \Symfony\Bridge\Monolog\Handler\FirePHPHandler(200, true);
+        $this->services['monolog.handler.firephp'] = $instance = new \Symfony\Bridge\Monolog\Handler\FirePHPHandler(200, true);
+
+        $instance->pushProcessor($this->get('monolog.processor.psr_log_message'));
+
+        return $instance;
     }
 
     /**
@@ -1454,7 +1525,24 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getMonolog_Handler_MainService()
     {
-        return $this->services['monolog.handler.main'] = new \Monolog\Handler\StreamHandler(($this->targetDirs[2].'\\logs/dev.log'), 100, true, NULL);
+        $this->services['monolog.handler.main'] = $instance = new \Monolog\Handler\StreamHandler(($this->targetDirs[2].'\\logs/dev.log'), 100, true, NULL);
+
+        $instance->pushProcessor($this->get('monolog.processor.psr_log_message'));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the 'monolog.handler.null_internal' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * @return \Monolog\Handler\NullHandler A Monolog\Handler\NullHandler instance.
+     */
+    protected function getMonolog_Handler_NullInternalService()
+    {
+        return $this->services['monolog.handler.null_internal'] = new \Monolog\Handler\NullHandler();
     }
 
     /**
@@ -1801,9 +1889,9 @@ class appDevDebugProjectContainer extends Container
         $d->addLoader(new \Symfony\Component\Routing\Loader\YamlFileLoader($a));
         $d->addLoader(new \Symfony\Component\Routing\Loader\PhpFileLoader($a));
         $d->addLoader(new \Symfony\Bundle\AsseticBundle\Routing\AsseticLoader($this->get('assetic.asset_manager'), array()));
+        $d->addLoader($c);
         $d->addLoader(new \Symfony\Component\Routing\Loader\AnnotationDirectoryLoader($a, $c));
         $d->addLoader(new \Symfony\Component\Routing\Loader\AnnotationFileLoader($a, $c));
-        $d->addLoader($c);
 
         return $this->services['routing.loader'] = new \Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader($this->get('controller_name_converter'), $this->get('monolog.logger.router', ContainerInterface::NULL_ON_INVALID_REFERENCE), $d);
     }
@@ -1876,7 +1964,7 @@ class appDevDebugProjectContainer extends Container
 
         $d = new \Symfony\Component\Security\Http\AccessMap();
 
-        return $this->services['security.firewall.map.context.main'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($d, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($b, array(0 => new \Symfony\Component\Security\Core\User\InMemoryUserProvider()), 'main', $a, $this->get('event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($b, '5ba2daaf4478b', $a), 3 => new \Symfony\Component\Security\Http\Firewall\AccessListener($b, $this->get('security.access.decision_manager'), $d, $this->get('security.authentication.manager'))), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($b, $this->get('security.authentication.trust_resolver'), new \Symfony\Component\Security\Http\HttpUtils($c, $c), 'main', NULL, NULL, NULL, $a, false));
+        return $this->services['security.firewall.map.context.main'] = new \Symfony\Bundle\SecurityBundle\Security\FirewallContext(array(0 => new \Symfony\Component\Security\Http\Firewall\ChannelListener($d, new \Symfony\Component\Security\Http\EntryPoint\RetryAuthenticationEntryPoint(80, 443), $a), 1 => new \Symfony\Component\Security\Http\Firewall\ContextListener($b, array(0 => new \Symfony\Component\Security\Core\User\InMemoryUserProvider()), 'main', $a, $this->get('event_dispatcher', ContainerInterface::NULL_ON_INVALID_REFERENCE)), 2 => new \Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener($b, '5ba70761f3b40', $a), 3 => new \Symfony\Component\Security\Http\Firewall\AccessListener($b, $this->get('security.access.decision_manager'), $d, $this->get('security.authentication.manager'))), new \Symfony\Component\Security\Http\Firewall\ExceptionListener($b, $this->get('security.authentication.trust_resolver'), new \Symfony\Component\Security\Http\HttpUtils($c, $c), 'main', NULL, NULL, NULL, $a, false));
     }
 
     /**
@@ -2923,6 +3011,7 @@ class appDevDebugProjectContainer extends Container
         $instance->addPath(($this->targetDirs[3].'\\vendor\\symfony\\symfony\\src\\Symfony\\Bundle\\TwigBundle/Resources/views'), 'Twig');
         $instance->addPath(($this->targetDirs[3].'\\vendor\\symfony\\swiftmailer-bundle/Resources/views'), 'Swiftmailer');
         $instance->addPath(($this->targetDirs[3].'\\vendor\\doctrine\\doctrine-bundle/Resources/views'), 'Doctrine');
+        $instance->addPath(($this->targetDirs[3].'\\src\\AppBundle/Resources/views'), 'App');
         $instance->addPath(($this->targetDirs[3].'\\vendor\\symfony\\symfony\\src\\Symfony\\Bundle\\WebProfilerBundle/Resources/views'), 'WebProfiler');
         $instance->addPath(($this->targetDirs[3].'\\vendor\\sensio\\distribution-bundle\\Sensio\\Bundle\\DistributionBundle/Resources/views'), 'SensioDistribution');
         $instance->addPath(($this->targetDirs[2].'/Resources/views'));
@@ -3094,6 +3183,23 @@ class appDevDebugProjectContainer extends Container
     }
 
     /**
+     * Gets the 'monolog.processor.psr_log_message' service.
+     *
+     * This service is shared.
+     * This method always returns the same instance of the service.
+     *
+     * This service is private.
+     * If you want to be able to request this service from the container directly,
+     * make it public, otherwise you might end up with broken code.
+     *
+     * @return \Monolog\Processor\PsrLogMessageProcessor A Monolog\Processor\PsrLogMessageProcessor instance.
+     */
+    protected function getMonolog_Processor_PsrLogMessageService()
+    {
+        return $this->services['monolog.processor.psr_log_message'] = new \Monolog\Processor\PsrLogMessageProcessor();
+    }
+
+    /**
      * Gets the 'router.request_context' service.
      *
      * This service is shared.
@@ -3141,7 +3247,7 @@ class appDevDebugProjectContainer extends Container
      */
     protected function getSecurity_Authentication_ManagerService()
     {
-        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('5ba2daaf4478b')), true);
+        $this->services['security.authentication.manager'] = $instance = new \Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager(array(0 => new \Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider('5ba70761f3b40')), true);
 
         $instance->setEventDispatcher($this->get('event_dispatcher'));
 
@@ -3324,8 +3430,8 @@ class appDevDebugProjectContainer extends Container
             'kernel.charset' => 'UTF-8',
             'kernel.container_class' => 'appDevDebugProjectContainer',
             'database_driver' => 'pdo_mysql',
-            'database_host' => '127.0.0.1',
-            'database_port' => NULL,
+            'database_host' => 'localhost',
+            'database_port' => 3306,
             'database_name' => 'symfony',
             'database_user' => 'root',
             'database_password' => 'toor',
