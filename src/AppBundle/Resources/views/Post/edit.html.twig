@@ -1,10 +1,11 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-     <h1>Formulário</h1>
-
+    <h1>Formulário</h1>
     {{ form(edit_form) }}
-
+    <a href="{{ path('post') }}" ><span class="fa fa-arrow-circle-left"></span>
+            Voltar para a lista de posts
+    </a>
     <script>
         var titulo = document.getElementById("appbundle_post_titulo");
         var sumario = document.getElementById("appbundle_post_sumario");

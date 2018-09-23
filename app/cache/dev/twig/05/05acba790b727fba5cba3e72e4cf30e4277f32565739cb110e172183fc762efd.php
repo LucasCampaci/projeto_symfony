@@ -29,12 +29,16 @@ class __TwigTemplate_3d55317254a5aa229ad65532d583d419ed45decaa40afa26873617c800f
     {
         // line 4
         echo "<h1>Formulário</h1>
-
     ";
-        // line 6
+        // line 5
         echo         $this->env->getExtension('form')->renderer->renderBlock((isset($context["edit_form"]) ? $context["edit_form"] : $this->getContext($context, "edit_form")), 'form');
         echo "
-
+    <a href=\"";
+        // line 6
+        echo $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("post");
+        echo "\" ><span class=\"fa fa-arrow-circle-left\"></span>
+            Voltar para a lista de posts
+    </a>
     <script>
         var titulo = document.getElementById(\"appbundle_post_titulo\");
         var sumario = document.getElementById(\"appbundle_post_sumario\");
@@ -71,7 +75,7 @@ class __TwigTemplate_3d55317254a5aa229ad65532d583d419ed45decaa40afa26873617c800f
 
     public function getDebugInfo()
     {
-        return array (  35 => 6,  31 => 4,  28 => 3,  11 => 1,);
+        return array (  38 => 6,  34 => 5,  31 => 4,  28 => 3,  11 => 1,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */
@@ -87,10 +91,11 @@ class __TwigTemplate_3d55317254a5aa229ad65532d583d419ed45decaa40afa26873617c800f
         return new Twig_Source("{% extends '::base.html.twig' %}
 
 {% block body -%}
-     <h1>Formulário</h1>
-
+    <h1>Formulário</h1>
     {{ form(edit_form) }}
-
+    <a href=\"{{ path('post') }}\" ><span class=\"fa fa-arrow-circle-left\"></span>
+            Voltar para a lista de posts
+    </a>
     <script>
         var titulo = document.getElementById(\"appbundle_post_titulo\");
         var sumario = document.getElementById(\"appbundle_post_sumario\");

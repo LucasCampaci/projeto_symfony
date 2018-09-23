@@ -37,9 +37,9 @@ class __TwigTemplate_0def40af215feee0f1e6d1b89ed762dfcfae2b96c50c9d5205bd276478b
     <a href=\"";
         // line 7
         echo $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("post");
-        echo "\" >
+        echo "\" ><span class=\"fa fa-arrow-circle-left\"></span>
             Voltar para a lista de posts
-        </a>
+    </a>
 <script>
     var titulo = document.getElementById(\"appbundle_post_titulo\");
     var sumario = document.getElementById(\"appbundle_post_sumario\");
@@ -95,9 +95,9 @@ class __TwigTemplate_0def40af215feee0f1e6d1b89ed762dfcfae2b96c50c9d5205bd276478b
     <h1>Formulário</h1>
     {{ form(form) }}
 
-    <a href=\"{{ path('post') }}\" >
+    <a href=\"{{ path('post') }}\" ><span class=\"fa fa-arrow-circle-left\"></span>
             Voltar para a lista de posts
-        </a>
+    </a>
 <script>
     var titulo = document.getElementById(\"appbundle_post_titulo\");
     var sumario = document.getElementById(\"appbundle_post_sumario\");

@@ -1,16 +1,18 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Lista de Posts</h1>
-        <a href="{{ path('post_new') }}" class="btn btn-info">
-           <span class="mdi mdi-add"/>Criar um novo post
-        </a>
-    <table class="records_list table table-striped table-hover">
+    <div style="display: inline;">
+        <span  class="h1">Lista de Posts</span>
+            <a href="{{ path('post_new') }}" class="btn btn-info" style="padding: 1%; float:right">
+                <span class="fa fa-plus" style="padding-right: 3%">&nbsp;</span>Criar um novo post
+            </a><br/>
+    </div><br/><br/>
+    <table class="records_list table table-striped table-hover" id="table-data">
         <thead>
             <tr>
                 <th>Título</th>
-                <th>Publicado em</th>
-                <th colspan="3">Ações</th>
+                <th><span class="fa fa-calendar-o">&nbsp;</span>Publicado em</th>
+                <th colspan="3"><span class="fa fa-wrench">&nbsp;</span>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -18,9 +20,9 @@
             <tr>
                 <td>{{ entity.titulo }}</td>
                 <td>{% if entity.dataPublicacao %}{{ entity.dataPublicacao|date('M d, Y, H:i A') }}{% endif %}</td>
-                <td><a href="{{ path('post_show', { 'id': entity.id }) }}" class="btn btn-primary">Exibir</a></td>
-                <td><a href="{{ path('post_edit', { 'id': entity.id }) }}" class="btn btn-success">Editar</a></td>
-                <td><a href="{{ path('delete', { 'id': entity.id }) }}" class="btn btn-danger">Excluir</a></td>
+                <td><a href="{{ path('post_show', { 'id': entity.id }) }}" class="btn btn-primary"><span class="fa fa-eye">&nbsp;</span>Exibir</a></td>
+                <td><a href="{{ path('post_edit', { 'id': entity.id }) }}" class="btn btn-success"><span class="fa fa-edit">&nbsp;</span>Editar</a></td>
+                <td><a href="{{ path('delete', { 'id': entity.id }) }}" class="btn btn-danger"><span class="fa fa-edit">&nbsp;</span>Excluir</a></td>
             </tr>
         {% endfor %}
         </tbody>
