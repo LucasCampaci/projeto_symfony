@@ -1,14 +1,29 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Post edit</h1>
+     <h1>Formulário</h1>
 
     {{ form(edit_form) }}
 
+    <script>
+        var titulo = document.getElementById("appbundle_post_titulo");
+        var sumario = document.getElementById("appbundle_post_sumario");
+        var conteudo = document.getElementById("appbundle_post_conteudo");
+        var btnSubmit = document.getElementById("appbundle_post_submit");
 
-        <a href="{{ path('post') }}">
-            Back to the list
-        </a>
+        document.addEventListener("DOMContentLoaded", function () {
+            titulo.addEventListener("keyup", validar);
+            sumario.addEventListener("keyup", validar);
+            conteudo.addEventListener("keyup", validar);
+            validar();
+        });
 
-{{ form(delete_form) }}
+        function validar() {
+            if(titulo.value.length > 0 && sumario.value.length > 0 && conteudo.value.length > 0) {
+                btnSubmit.disabled = false;
+            } else {
+                btnSubmit.disabled = true;
+            }
+        }
+    </script>
 {% endblock %}

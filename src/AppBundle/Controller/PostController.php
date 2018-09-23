@@ -80,7 +80,8 @@ class PostController extends Controller
             array('label' => 'Salvar',  
             'attr' => [
                 'class' => 'btn btn-primary',
-                'style' => 'margin-top: 10px'
+                'style' => 'margin-top: 10px',
+                'disabled' => true
             ]));
 
         return $form;
@@ -173,8 +174,9 @@ class PostController extends Controller
         $form->add('submit', 'submit',
               array('label' => 'Salvar',  
             'attr' => [
-                 'class' => 'btn btn-primary',
-                 'style' => 'margin-top: 10px'
+                'class' => 'btn btn-primary',
+                'style' => 'margin-top: 10px',
+                'disabled' => true
             ]));
 
         return $form;

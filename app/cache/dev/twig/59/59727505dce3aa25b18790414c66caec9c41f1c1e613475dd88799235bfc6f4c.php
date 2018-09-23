@@ -36,7 +36,6 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
         echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bundle\TwigBundle\Extension\AssetsExtension')->getAssetUrl("favicon.ico"), "html", null, true);
         echo "\" />
         <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"css/material-icons.css\">
 </head>
     <body>
         <nav class=\"navbar navbar-expand-lg navbar-dark\" style=\"background-color: #005286\">
@@ -49,7 +48,7 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
               <ul class=\"navbar-nav mr-auto\">
                 <li class=\"nav-item active\">
                   <a class=\"nav-link\" href=\"";
-        // line 21
+        // line 20
         echo $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("post");
         echo "\">Lista de posts</a>
                 </li>
@@ -65,12 +64,12 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
           </nav>
         <div style=\"padding-left: 5%; width: 70%\">
             ";
-        // line 34
+        // line 33
         $this->displayBlock('body', $context, $blocks);
-        // line 35
+        // line 34
         echo "            ";
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 36
+        // line 35
         echo "        </div>
     </body>
 </html>
@@ -88,12 +87,12 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
     {
     }
 
-    // line 34
+    // line 33
     public function block_body($context, array $blocks = array())
     {
     }
 
-    // line 35
+    // line 34
     public function block_javascripts($context, array $blocks = array())
     {
     }
@@ -110,7 +109,7 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
 
     public function getDebugInfo()
     {
-        return array (  97 => 35,  92 => 34,  87 => 6,  81 => 5,  74 => 36,  71 => 35,  69 => 34,  53 => 21,  35 => 7,  33 => 6,  29 => 5,  23 => 1,);
+        return array (  96 => 34,  91 => 33,  86 => 6,  80 => 5,  73 => 35,  70 => 34,  68 => 33,  52 => 20,  35 => 7,  33 => 6,  29 => 5,  23 => 1,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */
@@ -131,7 +130,6 @@ class __TwigTemplate_fe747daf4399d072a73d252e379a7908db501737cf9b2a4dea8af81731f
         {% block stylesheets %}{% endblock %}
         <link rel=\"icon\" type=\"image/x-icon\" href=\"{{ asset('favicon.ico') }}\" />
         <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">
-        <link rel=\"stylesheet\" href=\"css/material-icons.css\">
 </head>
     <body>
         <nav class=\"navbar navbar-expand-lg navbar-dark\" style=\"background-color: #005286\">

@@ -40,7 +40,27 @@ class __TwigTemplate_0def40af215feee0f1e6d1b89ed762dfcfae2b96c50c9d5205bd276478b
         echo "\" >
             Voltar para a lista de posts
         </a>
-
+<script>
+    var titulo = document.getElementById(\"appbundle_post_titulo\");
+    var sumario = document.getElementById(\"appbundle_post_sumario\");
+    var conteudo = document.getElementById(\"appbundle_post_conteudo\");
+    var btnSubmit = document.getElementById(\"appbundle_post_submit\");
+        
+    document.addEventListener(\"DOMContentLoaded\", function () {
+        titulo.addEventListener(\"keyup\", validar);
+        sumario.addEventListener(\"keyup\", validar);
+        conteudo.addEventListener(\"keyup\", validar);
+        validar();
+    });
+    
+    function validar() {
+        if(titulo.value.length > 0 && sumario.value.length > 0 && conteudo.value.length > 0) {
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+    }
+</script>
 ";
     }
 
@@ -78,7 +98,27 @@ class __TwigTemplate_0def40af215feee0f1e6d1b89ed762dfcfae2b96c50c9d5205bd276478b
     <a href=\"{{ path('post') }}\" >
             Voltar para a lista de posts
         </a>
-
+<script>
+    var titulo = document.getElementById(\"appbundle_post_titulo\");
+    var sumario = document.getElementById(\"appbundle_post_sumario\");
+    var conteudo = document.getElementById(\"appbundle_post_conteudo\");
+    var btnSubmit = document.getElementById(\"appbundle_post_submit\");
+        
+    document.addEventListener(\"DOMContentLoaded\", function () {
+        titulo.addEventListener(\"keyup\", validar);
+        sumario.addEventListener(\"keyup\", validar);
+        conteudo.addEventListener(\"keyup\", validar);
+        validar();
+    });
+    
+    function validar() {
+        if(titulo.value.length > 0 && sumario.value.length > 0 && conteudo.value.length > 0) {
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+    }
+</script>
 {% endblock %}
 ", "AppBundle:Post:new.html.twig", "C:\\wamp64\\www\\projeto_symfony\\projeto_symfony\\src\\AppBundle/Resources/views/Post/new.html.twig");
     }

@@ -17,19 +17,22 @@ class PostType extends AbstractType
         $builder
             ->add('titulo', 'text',[
                 'attr' => [
-                    'class' => 'form-control'
+                    'class' => 'form-control',
+                    'required' => true
                 ]
             ])
             ->add('sumario','textarea',[
                 'attr' => [
                     'class' => 'form-control',
-                    'rows' => 2, 'cols' => 100
+                    'rows' => 2, 'cols' => 100,
+                    'required' => true
                 ]
             ])
             ->add('conteudo', 'textarea',[
                 'attr' => [
                     'class' => 'form-control',
-                     'rows' => 10, 'cols' => 100
+                    'rows' => 10, 'cols' => 100,
+                    'required' => true
                 ]
             ])
         ;
